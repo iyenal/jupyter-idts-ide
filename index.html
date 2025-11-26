@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>JupyterLite with GoldenLayout</title>
+    <link rel="stylesheet" href="./style.css">
+    <!-- Use HTTPS for security -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
+    <link type="text/css" rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-light-theme.css" />
+    
+    <!-- JupyterLite integration -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@jupyterlab/theme-light-extension@3.0.0/style/theme.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@jupyterlab/nbconvert@3.0.0/style/index.css">
+  </head>
+  <body>
+    <!-- Hidden iframe for Jupyter kernel -->
+    <iframe id="jupyter-frame" src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&code=print(%22Hello%20World%22)" style="display: none;"></iframe>
+    <div id="layout-container"></div>
+    <script src="./script.js"></script>
+  </body>
+</html>
