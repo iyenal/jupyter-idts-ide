@@ -1,0 +1,5 @@
+console:create { 'path': 'console2'}
+console:open { 'path': 'console2' }
+console:inject { 'path': 'console2',  'code': 'print(a)'}
+
+

@@ -1,0 +1,24 @@
+{
+  "name": "idts-ide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iyenal/jupyter-idts-ide.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/iyenal/jupyter-idts-ide/issues"
+  },
+  "homepage": "https://github.com/iyenal/jupyter-idts-ide#readme",
+  "dependencies": {
+    "jupyter-iframe-commands-host": "^0.3.0"
+  }
+}

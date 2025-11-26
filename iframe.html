@@ -2,7 +2,7 @@
   <head>
     <title>JupyterLite in an iframe</title>
     <script type="module">
-      import { createBridge } from 'jupyter-iframe-commands-host';
+      import { createBridge } from './jupyter-iframe-commands-host.js';
 
       // Create a bridge to the JupyterLite instance
       const commandBridge = createBridge({ iframeId: 'jupyter-iframe' });
