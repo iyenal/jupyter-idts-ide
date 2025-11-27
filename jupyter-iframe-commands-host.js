@@ -1,6 +1,6 @@
 // Copyright (c) TileDB, Inc.
 // Distributed under the terms of the Modified BSD License.
-import { windowEndpoint, wrap, proxy } from 'comlink';
+import { windowEndpoint, wrap, proxy } from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 /**
  * A bridge to expose actions on JupyterLab commands.
  */
