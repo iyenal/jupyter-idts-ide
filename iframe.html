@@ -9,7 +9,20 @@
 
       // Example: Toggle the left sidebar
       async function toggleLeftSidebar() {
-        await commandBridge.execute('application:toggle-left-area');
+
+        await commandBridge.execute('console:create', {
+          path: 'console1',
+          kernelPreference: {autoStartDefault: true},          
+        });
+
+        await commandBridge.execute('console:open', {
+          path: 'console1',
+        });
+
+        await commandBridge.execute('console:inject', {
+          path: 'console1', 
+          code: 'print(a)'
+        });
       }
 
       // Example: Change the theme
@@ -40,7 +53,7 @@
     </div>
     <iframe
       id="jupyter-iframe"
-      src="jupyter/"
+      src="jupyter/index.html"
       width="100%"
       height="600px"
       sandbox="allow-scripts allow-same-origin"
