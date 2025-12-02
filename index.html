@@ -16,8 +16,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@jupyterlab/theme-light-extension@3.0.0/style/theme.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@jupyterlab/nbconvert@3.0.0/style/index.css">
   
-    <script>
-        var config = {
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js"></script>
+
+<script>
+
+/*****************************************
+ * GoldenLayout integration
+ *****************************************/
+
+var config = {
   content: [{
     type: 'row',
     content: [
@@ -40,27 +47,109 @@
   }]
 };
 
-          var myLayout = new GoldenLayout(config, document.getElementById('layoutContainer'));
+var savedState = localStorage.getItem( 'savedState' );
+
+if( savedState !== null ) {
+    myLayout = new GoldenLayout( JSON.parse( savedState ), document.getElementById('layoutContainer'));
+} else {
+    myLayout = new GoldenLayout( config, document.getElementById('layoutContainer'));
+}
+
+myLayout.on( 'stateChanged', function(){
+    var state = JSON.stringify( myLayout.toConfig() );
+    localStorage.setItem( 'savedState', state );
+});
 
 myLayout.registerComponent('iframe1', function(container, state) {
-  container.getElement().html('<iframe src="iframe.html" style="width:100%;height:100%;border:none;"></iframe>');
+  container.getElement().html(`
+
+<input id="code" value="sum([1, 2, 3, 4, 5])"/>
+<button onclick="evaluatePython()">Run</button>
+<br />
+<br />
+<div>Output:</div>
+<textarea id="output" style="width: 100%;" rows="6" disabled></textarea>
+`);
 });
 
 myLayout.registerComponent('iframe2', function(container, state) {
-  container.getElement().html('<iframe src="iframe.html" style="width:100%;height:100%;border:none;"></iframe>');
+  container.getElement().html(
+    '<iframe id="jupyter-iframe-results" src="jupyter/repl/index.html?kernel=python&clearCellsOnExecute=1&hideCodeInput=1&clearCodeContentOnExecute=1&showBanner=0&code=print(Results)" width="100%" height="100%" sandbox="allow-scripts allow-same-origin"></iframe>');
 });
 
 myLayout.registerComponent('iframe3', function(container, state) {
-  container.getElement().html('<iframe src="iframe.html" style="width:100%;height:100%;border:none;"></iframe>');
+  container.getElement().html(
+    '<iframe id="jupyter-iframe-data" src="jupyter/repl/index.html?kernel=python&clearCellsOnExecute=1&hideCodeInput=1&clearCodeContentOnExecute=1&showBanner=0&code=print(Data)" width="100%" height="100%" sandbox="allow-scripts allow-same-origin"></iframe>');
 });
 
 myLayout.init();
-    </script>
-  
+
+/*****************************************
+ * Pyodide integration
+ *****************************************/
+
+var output;
+var code;
+
+myLayout.on('initialised', function() {
+  output = document.getElementById("output");
+  code = document.getElementById("code");
+});
+
+function addToOutput(s) {
+  output.value += ">>>" + code.value + "\n" + s + "\n";
+}
+
+// init Pyodide
+async function main() {
+  let pyodide = await loadPyodide();
+  output.value += "Ready!\n";
+  return pyodide;
+}
+let pyodideReadyPromise = main();
+
+async function evaluatePython() {
+  let pyodide = await pyodideReadyPromise;
+  try {
+    let output = pyodide.runPython(code.value);
+    addToOutput(output);
+  } catch (err) {
+    addToOutput(err);
+  }
+}
+
+</script>
+
+<script type="module">
+
+/*****************************************
+ * JupyterLite command bridge integration
+ *****************************************/
+
+var commandBridge;
+import { createBridge } from './jupyter-iframe-commands-host.js';
+
+// Example: Toggle the left sidebar
+async function toggleLeftSidebar() {
+  // Create a bridge to the JupyterLite instance
+  commandBridge = createBridge({ iframeId: 'jupyter-iframe-results'});
+  console.log("Opened console1");
+  await commandBridge.execute('console:inject', {
+    path: 'iframe_console', 
+    code: 'import numpy as np;from matplotlib import pyplot as plt;x, y, scale = np.random.randn(3, 100);fig, ax = plt.subplots();ax.scatter(x=x, y=y, c=scale, s=np.abs(scale) * 500);plt.show()'
+  });
+  console.log("Injected code into console1");
+}
+
+      // Make functions available globally
+      window.toggleLeftSidebar = toggleLeftSidebar;
+</script>
+
+
   </head>
     <body style="margin:0;padding:0;overflow:hidden;">
       <div id="toolbar" style="width:100%;height:48px;display:flex;align-items:center;padding:0 16px;background:#f5f5f5;border-bottom:1px solid #ddd;box-sizing:border-box;">
-        <button style="margin-right:8px;">Button 1</button>
+        <button style="margin-right:8px;" onclick="toggleLeftSidebar()">Button 1</button>
         <button style="margin-right:8px;">Button 2</button>
         <button>Button 3</button>
       </div>
