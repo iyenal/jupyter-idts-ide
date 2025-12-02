@@ -10,19 +10,12 @@
       // Example: Toggle the left sidebar
       async function toggleLeftSidebar() {
 
-        await commandBridge.execute('console:create', {
-          path: 'console1',
-          kernelPreference: {autoStartDefault: true},          
-        });
-
-        await commandBridge.execute('console:open', {
-          path: 'console1',
-        });
-
+        console.log("Opened console1");
         await commandBridge.execute('console:inject', {
-          path: 'console1', 
-          code: 'print(a)'
+          path: 'iframe_console', 
+          code: 'import numpy as np;from matplotlib import pyplot as plt;x, y, scale = np.random.randn(3, 100);fig, ax = plt.subplots();ax.scatter(x=x, y=y, c=scale, s=np.abs(scale) * 500);plt.show()'
         });
+        console.log("Injected code into console1");
       }
 
       // Example: Change the theme
@@ -51,9 +44,12 @@
       <button onclick="setDarkTheme()">Set Dark Theme</button>
       <button onclick="listCommands()">List Commands (check console)</button>
     </div>
+
+
+
     <iframe
       id="jupyter-iframe"
-      src="jupyter/index.html"
+      src="jupyter/repl/index.html?kernel=python&clearCellsOnExecute=1&hideCodeInput=1&clearCodeContentOnExecute=1&showBanner=0&code=print('hello')"
       width="100%"
       height="600px"
       sandbox="allow-scripts allow-same-origin"
